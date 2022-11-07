@@ -1,20 +1,37 @@
+import { CSSProperties, useEffect, useState } from "react";
 import { Chat } from "../components/chat";
 import { useSocket } from "../context/socketContext";
 
 export default function App() {
-  const { socket, socketState } = useSocket();
+  const { socket, ready, clientId, members } = useSocket();
 
   const onClickFindMatch = () => {
-    if (socketState !== 1) return;
+    console.log({ ready });
+    if (!ready) return;
 
     console.log("sending message");
 
-    socket?.send("send message");
+    socket?.send("bismani");
   };
 
   return (
     <>
       <Chat />
+      {/* Online players count */}
+      <div className="fixed bottom-5 right-5 stats shadow">
+        <div className="stat py-2 px-5">
+          <div className="stat-value countdown">
+            <span
+              style={
+                { "--value": Object.keys(members).length } as CSSProperties
+              }
+            ></span>
+          </div>
+          <div className="stat-title">online</div>
+        </div>
+      </div>
+
+      {/* Navbar */}
       <main className="shadow-md relative max-w-screen-md mx-auto bg-base-100 border-base-content/5 border rounded-box m-4 flex flex-col items-center px-6 pb-6">
         {/* navbar */}
         <div className="navbar bg-base-100 p-0">
@@ -61,6 +78,26 @@ export default function App() {
               </div>
             </button>
           </div>
+        </div>
+        <div className="fixed flex flex-col items-center top-5 right-5 px-5 py-2 bg-base-100 shadow rounded z-50">
+          <h1 className="text-primary border-b-[3px] border-primary mb-2">
+            Members
+          </h1>
+          {Object.keys(members).map((memberId) => (
+            <div
+              key={memberId}
+              className={`${
+                memberId === clientId ? "font-bold" : ""
+              } text-slate-800`}
+            >
+              {members[memberId].name}{" "}
+              {memberId === clientId ? (
+                <b className="text-xs font-bold">(you)</b>
+              ) : (
+                ""
+              )}
+            </div>
+          ))}
         </div>
         <div className="flex w-full my-4 border-b-[3px] border-primary">
           <h1 className="text-primary">Play</h1>

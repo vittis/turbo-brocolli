@@ -12,6 +12,7 @@
     "wrangler": "2.1.15"
   },
   "dependencies": {
-    "hono": "2.4.1"
+    "hono": "2.4.1",
+    "unique-names-generator": "^4.7.1"
   }
 }

@@ -1,11 +1,17 @@
 import { Hono } from "hono";
+import ShortUniqueId from "short-unique-id";
 export { Counter } from "./counter";
+export { Lobby } from "./lobby";
+import { logger } from "hono/logger";
 
 interface Env {
   COUNTER: DurableObjectNamespace;
+  LOBBY: DurableObjectNamespace;
 }
 
 const app = new Hono<{ Bindings: Env }>();
+
+app.use("*", logger());
 
 app.get("/counter/*", async (c) => {
   const id = c.env.COUNTER.idFromName("A");
@@ -21,24 +27,11 @@ app.get("/counter/*", async (c) => {
 });
 
 app.get("/socket", async (c) => {
-  const upgradeHeader = c.req.headers.get("Upgrade");
-  if (!upgradeHeader || upgradeHeader !== "websocket") {
-    return new Response("Expected Upgrade: websocket", { status: 426 });
-  }
+  const id = c.env.LOBBY.idFromName("Lobby");
+  const obj = c.env.LOBBY.get(id);
+  const resp = await obj.fetch(c.req);
 
-  const webSocketPair = new WebSocketPair();
-  const [client, server] = Object.values(webSocketPair);
-
-  server.accept();
-  server.addEventListener("message", (event) => {
-    console.log(event.data);
-    server.send("anything");
-  });
-
-  return new Response(null, {
-    status: 101,
-    webSocket: client,
-  });
+  return resp;
 });
 
 export default app;

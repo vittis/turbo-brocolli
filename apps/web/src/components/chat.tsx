@@ -33,7 +33,7 @@ export const Chat = () => {
       style={{ animation: "button-pop 0.2s ease-out" }}
       className="fixed left-2 bottom-2 z-50 bg-base-100 shadow-lg"
     >
-      <div className="flex flex-col w-80 border-2 rounded-md border-primary pt-2 pb-0 focus:outline-none focus-within:ring-1 focus-within:ring-primary">
+      <div className="flex flex-col w-80 border-2 rounded-md border-[#1d191924] pt-2 pb-0 focus:outline-none focus-within:ring-1 focus-within:ring-[#1d191924]">
         <button
           onClick={() => setIsOpen(false)}
           className="btn btn-primary p-3 btn-ghost absolute top-0 right-0 focus:outline-none focus:ring focus:ring-inset"
@@ -48,7 +48,7 @@ export const Chat = () => {
           asdasda
         </div>
 
-        <form className="prose border-t-2 border-primary">
+        <form className="prose border-t-2 border-[#1d191924]">
           <input
             className=" input h-10 input-ghost w-full border-0 text-base focus:outline-0"
             placeholder="Speak thy mind, friend"

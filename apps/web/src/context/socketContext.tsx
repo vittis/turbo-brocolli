@@ -11,38 +11,74 @@ import {
 const SOCKET_SERVER_URL = "ws://localhost:8787/socket";
 
 interface SocketContextType {
-  socketState: number;
+  ready: boolean;
   socket: WebSocket | undefined;
+  clientId: string | undefined;
+  members: any;
 }
 
 const SocketContext = createContext<SocketContextType>({
-  socketState: 0,
+  ready: false,
   socket: undefined,
+  clientId: undefined,
+  members: {},
 });
 
 export const SocketProvider = ({ children }: { children: ReactNode }) => {
   const [socketState, setSocketStateState] = useState<number>(0);
+  const [clientId, setClientId] = useState<string>();
+  const [members, setMembers] = useState<any>({});
 
   const socketRef = useRef<WebSocket>();
 
   const setup = () => {
-    console.log("connecting");
     const socket = new WebSocket(SOCKET_SERVER_URL);
+
     socket.addEventListener("message", (event) => {
-      console.log("Message received from server");
+      /* console.log("Message received from server");
       console.log(event.data);
+      console.log("---"); */
+
+      const parsedEvent = JSON.parse(event.data);
+      if (parsedEvent.eventName === "receiveInfo") {
+        console.log("receiveInfo");
+        const {
+          payload: { id, sessions },
+        } = parsedEvent;
+
+        if (!id) {
+          throw Error("No id received");
+        }
+        if (!sessions) {
+          throw Error("No sessions received");
+        }
+        console.log("setting id", id);
+        setMembers(sessions);
+        setClientId(id);
+      }
+
+      if (parsedEvent.eventName === "receiveMembersInfo") {
+        console.log("receiveMembersInfo");
+        const {
+          payload: { sessions },
+        } = parsedEvent;
+        if (!sessions) {
+          throw Error("No sessions received");
+        }
+        setMembers(sessions);
+      }
     });
 
     socket.addEventListener("open", (event) => {
-      console.log("setting socket.readyState ", socket.readyState);
+      // console.log("setting socket.readyState ", socket.readyState);
       setSocketStateState(socket.readyState);
       socketRef.current = socket;
       console.log("OPEN", event);
-      socket.send("Hello Server!");
+      socket.send("askInfo");
     });
 
     socket.addEventListener("close", (event) => {
-      console.log("setting socket.readyState ", socket.readyState);
+      // console.log("setting socket.readyState ", socket.readyState);
       setSocketStateState(socket.readyState);
 
       console.log(
@@ -51,6 +87,7 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
         event.reason
       );
     });
+
     socket.addEventListener("error", (event) => {
       console.log("setting socket.readyState ", socket.readyState);
       setSocketStateState(socket.readyState);
@@ -61,14 +98,19 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     setup();
+    return () => {
+      socketRef.current?.close();
+    };
   }, []);
 
   const state = useMemo(() => {
     return {
-      socketState,
+      ready: socketState === 1 && !!clientId,
+      clientId,
       socket: socketRef.current,
+      members,
     };
-  }, [socketState]);
+  }, [socketState, clientId, members]);
 
   //console.log("RENDER PROVIDER", { clientState });
 
