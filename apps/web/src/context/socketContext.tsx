@@ -14,7 +14,8 @@ interface SocketContextType {
   ready: boolean;
   socket: WebSocket | undefined;
   clientId: string | undefined;
-  members: any;
+  members: { [key: string]: any };
+  name: string;
 }
 
 const SocketContext = createContext<SocketContextType>({
@@ -22,13 +23,14 @@ const SocketContext = createContext<SocketContextType>({
   socket: undefined,
   clientId: undefined,
   members: {},
+  name: "",
 });
 
 export const SocketProvider = ({ children }: { children: ReactNode }) => {
-  const [socketState, setSocketStateState] = useState<number>(0);
-  const [clientId, setClientId] = useState<string>();
+  const [clientId, setClientId] = useState<string>("");
   const [members, setMembers] = useState<any>({});
 
+  const [socketState, setSocketStateState] = useState<number>(0);
   const socketRef = useRef<WebSocket>();
 
   const setup = () => {
@@ -109,6 +111,7 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
       clientId,
       socket: socketRef.current,
       members,
+      name: members?.[clientId]?.name || "",
     };
   }, [socketState, clientId, members]);
 

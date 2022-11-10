@@ -13,11 +13,9 @@ export class Lobby {
 
   constructor(state: DurableObjectState) {
     this.state = state;
-    this.state.blockConcurrencyWhile(async () => {
-      const stored = await this.state.storage?.get<{ [id: string]: Session }>(
-        "sessions"
-      );
-      this.sessions = stored || {};
+
+    this.app.get("/lobby/members", async (c) => {
+      return c.json(this.sessions);
     });
 
     this.app.get("/socket", async (c) => {

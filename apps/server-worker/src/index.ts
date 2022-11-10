@@ -1,17 +1,26 @@
 import { Hono } from "hono";
-import ShortUniqueId from "short-unique-id";
+import { logger } from "hono/logger";
+
+/* durable objects exports */
 export { Counter } from "./counter";
 export { Lobby } from "./lobby";
-import { logger } from "hono/logger";
+export { ChatRoom } from "./ChatRoom";
 
 interface Env {
   COUNTER: DurableObjectNamespace;
   LOBBY: DurableObjectNamespace;
+  CHAT_ROOM: DurableObjectNamespace;
 }
 
 const app = new Hono<{ Bindings: Env }>();
 
 app.use("*", logger());
+
+app.get("/lobby/members", async (c) => {
+  const id = c.env.LOBBY.idFromName("Lobby");
+  const obj = c.env.LOBBY.get(id);
+  return await obj.fetch(c.req);
+});
 
 app.get("/counter/*", async (c) => {
   const id = c.env.COUNTER.idFromName("A");
@@ -29,6 +38,14 @@ app.get("/counter/*", async (c) => {
 app.get("/socket", async (c) => {
   const id = c.env.LOBBY.idFromName("Lobby");
   const obj = c.env.LOBBY.get(id);
+  const resp = await obj.fetch(c.req);
+
+  return resp;
+});
+
+app.get("/chat/global", async (c) => {
+  const id = c.env.CHAT_ROOM.idFromName("global");
+  const obj = c.env.CHAT_ROOM.get(id);
   const resp = await obj.fetch(c.req);
 
   return resp;

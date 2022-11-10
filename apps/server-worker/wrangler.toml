@@ -1,10 +1,10 @@
-name = "chat-worker"
+name = "broccoli"
 main = "src/index.ts"
 compatibility_date = "2022-08-11"
 
 [durable_objects]
-bindings = [{name = "COUNTER", class_name = "Counter"}, {name = "LOBBY", class_name = "Lobby"}]
+bindings = [{name = "COUNTER", class_name = "Counter"}, {name = "LOBBY", class_name = "Lobby"}, {name = "CHAT_ROOM", class_name = "ChatRoom"}]
 
 [[migrations]]
 tag = "v1" # Should be unique for each entry
-new_classes = ["Counter", "Lobby"]
+new_classes = ["Counter", "Lobby", "ChatRoom"]
