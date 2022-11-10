@@ -2,7 +2,7 @@ import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { FiChevronDown, FiMessageSquare } from "react-icons/fi";
 import { useSocket } from "../context/socketContext";
 
-const SOCKET_SERVER_URL = "ws://localhost:8787/chat/global";
+const SOCKET_SERVER_URL = "wss://broccoli.vittis.workers.dev/chat/global";
 
 interface ChatMessage {
   senderName: string;
@@ -11,7 +11,7 @@ interface ChatMessage {
 
 export const Chat = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -102,7 +102,7 @@ export const Chat = () => {
 
   if (!isOpen) {
     return (
-      <div className="fixed left-4 bottom-4">
+      <div className="fixed left-4 bottom-4 z-50">
         <button
           disabled={socketState === 0 || !name}
           onClick={() => setIsOpen(true)}

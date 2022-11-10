@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 
-const SOCKET_SERVER_URL = "ws://localhost:8787/socket";
+const SOCKET_SERVER_URL = "wss://broccoli.vittis.workers.dev/socket";
 
 interface SocketContextType {
   ready: boolean;
