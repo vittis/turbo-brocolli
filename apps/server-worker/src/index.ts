@@ -16,7 +16,7 @@ const app = new Hono<{ Bindings: Env }>();
 
 app.use("*", logger());
 
-app.get("/lobby/members", async (c) => {
+app.get("/lobby/*", async (c) => {
   const id = c.env.LOBBY.idFromName("Lobby");
   const obj = c.env.LOBBY.get(id);
   return await obj.fetch(c.req);

@@ -1,22 +1,25 @@
-import { CSSProperties, useEffect, useState } from "react";
+import * as Toast from "@radix-ui/react-toast";
+import { CSSProperties, useState } from "react";
 import { Chat } from "../components/chat";
 import { useSocket } from "../context/socketContext";
 
 export default function App() {
   const { socket, ready, clientId, members } = useSocket();
+  const [isToastOpen, setIsToastOpen] = useState(false);
 
-  const onClickFindMatch = () => {
+  const onClickCreateRoom = () => {
     console.log({ ready });
     if (!ready) return;
 
     console.log("sending message");
 
-    socket?.send("bismani");
+    socket?.send("askCreateRoom");
   };
 
   return (
     <>
       <Chat />
+
       {/* Online players count */}
       <div className="fixed bottom-5 right-5 stats shadow">
         <div className="stat py-2 px-5">
@@ -79,6 +82,8 @@ export default function App() {
             </button>
           </div>
         </div>
+
+        {/* Members */}
         <div className="fixed flex flex-col items-center top-5 right-5 px-5 py-2 bg-base-100 shadow rounded z-50">
           <h1 className="text-primary border-b-[3px] border-primary mb-2">
             Members
@@ -99,9 +104,11 @@ export default function App() {
             </div>
           ))}
         </div>
+
         <div className="flex w-full my-4 border-b-[3px] border-primary">
           <h1 className="text-primary">Play</h1>
         </div>
+
         <p className="has-dropcap prose mt-4">
           Welcome to brocolli lorem ipsum dolor sit, amet consectetur
           adipisicing elit. Quidem aliquam accusantium esse perferendis, itaque
@@ -109,16 +116,20 @@ export default function App() {
           magni numquam voluptatem et sit.{" "}
           <span className="link link-primary">Learn more.</span>{" "}
         </p>
+
         {/* find match */}
         <div className="max-w-fit flex flex-col items-center w-full border-opacity-50">
           <button
-            onClick={onClickFindMatch}
-            className="btn btn-secondary btn-wide mt-14 shadow-md"
+            className="btn btn-secondary btn-wide mt-14 shadow-sm"
+            disabled
           >
             Find Match
           </button>
           <div className="divider">OR</div>
-          <button className="btn btn-outline btn-wide shadow-md">
+          <button
+            onClick={onClickCreateRoom}
+            className="btn btn-outline btn-wide shadow-sm"
+          >
             Create room
           </button>
         </div>

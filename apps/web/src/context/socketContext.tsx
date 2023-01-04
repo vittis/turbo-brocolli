@@ -8,7 +8,8 @@ import {
   useState,
 } from "react";
 
-const SOCKET_SERVER_URL = "wss://broccoli.vittis.workers.dev/socket";
+// const SOCKET_SERVER_URL = "wss://broccoli.vittis.workers.dev/socket";
+const SOCKET_SERVER_URL = "ws://localhost:8787/socket";
 
 interface SocketContextType {
   ready: boolean;
@@ -40,8 +41,11 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
       /* console.log("Message received from server");
       console.log(event.data);
       console.log("---"); */
+      console.log("MESSAGE RECEIVE", event);
 
       const parsedEvent = JSON.parse(event.data);
+      console.log({ parsedEvent });
+      console.log(parsedEvent.eventName);
       if (parsedEvent.eventName === "receiveInfo") {
         console.log("receiveInfo");
         const {

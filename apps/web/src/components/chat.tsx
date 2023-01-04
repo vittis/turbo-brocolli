@@ -2,7 +2,8 @@ import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { FiChevronDown, FiMessageSquare } from "react-icons/fi";
 import { useSocket } from "../context/socketContext";
 
-const SOCKET_SERVER_URL = "wss://broccoli.vittis.workers.dev/chat/global";
+// const SOCKET_SERVER_URL = "wss://broccoli.vittis.workers.dev/chat/global";
+const SOCKET_SERVER_URL = "ws://localhost:8787/chat/global";
 
 interface ChatMessage {
   senderName: string;
